@@ -224,12 +224,3 @@ func (p *Reader) Dive() *Reader {
 	p.pos += size
 	return &subReader
 }
-
-// func (p *Reader) readId() int64 {
-// 	id := p.readCodedInt(false)
-// 	for id == EBML_VOID {
-// 		p.skipElem()
-// 		id = p.readCodedInt(false)
-// 	}
-// 	return id
-// }
