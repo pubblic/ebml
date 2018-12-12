@@ -81,9 +81,24 @@ func (p *Reader) ReadByte() byte {
 	return b
 }
 
-func (p *Reader) readCodedInt(j int) int64 {
+// ReadId reads Element ID.
+func (p *Reader) ReadId() int32 {
+	mask, value := int32(0x80), int32(p.ReadByte())
+	for i := 0; i < 7 && !p.AtEOS() && mask > value; i++ {
+		value = (value << 8) + int32(p.ReadByte())
+		mask <<= 7
+	}
+	if mask > value {
+		p.miss = true
+		return 0
+	}
+	return value
+}
+
+// ReadSize read Data Size.
+func (p *Reader) ReadSize() int64 {
 	mask, value := int64(0x80), int64(p.ReadByte())
-	for i := 0; i < j && !p.AtEOS() && mask > value; i++ {
+	for i := 0; i < 7 && !p.AtEOS() && mask > value; i++ {
 		value = (value << 8) + int64(p.ReadByte())
 		mask <<= 7
 	}
@@ -93,12 +108,6 @@ func (p *Reader) readCodedInt(j int) int64 {
 	}
 	return value - mask
 }
-
-// ReadId reads Element ID.
-func (p *Reader) ReadId() int32 { return int32(p.readCodedInt(3)) }
-
-// ReadSize read Data Size.
-func (p *Reader) ReadSize() int64 { return p.readCodedInt(7) }
 
 // ReadInt reads signed integer.
 func (p *Reader) ReadInt() int64 {
