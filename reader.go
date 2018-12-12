@@ -55,6 +55,14 @@ type Reader struct {
 	miss       bool
 }
 
+func NewReader(buf []byte) *Reader {
+	return &Reader{buf: buf}
+}
+
+func (p *Reader) Init(buf []byte) {
+	*p = Reader{buf: buf}
+}
+
 // Bytes returnes the underlying buffer of element.
 func (p *Reader) Bytes() []byte { return p.buf }
 
