@@ -225,8 +225,12 @@ func (p *Reader) Skip() {
 
 func (p *Reader) Dive() *Reader {
 	size := int(p.ReadSize())
+	hi := p.pos + size
+	if len(p.buf) < hi {
+		hi = len(p.buf)
+	}
 	subReader := Reader{
-		buf:   p.buf[p.pos : p.pos+size],
+		buf:   p.buf[p.pos:hi],
 		start: p.pos,
 		miss:  p.miss,
 	}
